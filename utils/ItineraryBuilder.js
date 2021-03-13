@@ -37,14 +37,14 @@ async function createShifts(numOfDays, places){
 ///DONT USE ARROW FUNCTIONS TO DEFINE METHODS IN NODE, animal!
 async function build(){
   const date = new Date()
-  const hasToRun = (await Itinerary.findOne({month:date.getMonth(), year:date.getFullYear()})) === null ? true : false
+  const hasToRun = (await Itinerary.findOne({month:date.getMonth() + 1, year:date.getFullYear()})) === null ? true : false
   const places = await Place.find()
   if(hasToRun){
     console.log("Creating this month itinerary....")
     const date = new Date()
-    let numOfDays = new Date(date.getFullYear(), date.getMonth(), 0).getDate()
+    let numOfDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
     let payload = {
-      month: date.getMonth(),
+      month: date.getMonth() + 1,
       year: date.getFullYear()
     }
     let shifts = await createShifts(numOfDays, places)

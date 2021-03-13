@@ -3,6 +3,7 @@ const router = express.Router();
 const Itinerary = require('../models/Itinerary')
 const Vigilant = require('../models/Vigilant')
 const Place = require('../models/Place')
+const Shift = require('../models/Shift')
 const itineraryBuilder = require('../utils/ItineraryBuilder')
 const createAndIntegrate = require('../utils/createPlaceAndIntegrate')
 const deletePlaceAndUpdateItinerary = require("../utils/deletePlaceAndUpdate")
@@ -27,7 +28,7 @@ router.get('/itinerary/', async(req,res,next) => {
 router.get("/itinerary/active/", async(req,res,next) => {
   try {
 			let date = new Date()
-      let activeItinerary = await Itinerary.findOne({month:date.getMonth(), year: date.getFullYear()})
+      let activeItinerary = await Itinerary.findOne({month:date.getMonth() + 1, year: date.getFullYear()})
       console.log(`Active itinerary fetched: \nReference:${activeItinerary.month}-${activeItinerary.year} > ${activeItinerary.shifts.length} shifts fetched.`);
       res.send({activeItinerary})
   } catch (err) {
@@ -37,7 +38,10 @@ router.get("/itinerary/active/", async(req,res,next) => {
 
 router.get('/shifts/', async(req,res) => {
 	try {
-		let shifts = await Shift.find()
+		let date = new Date()
+		let activeOnly = Object.keys(req.query).includes('active')
+		let activeItinerary = await Itinerary.findOne({month:date.getMonth() + 1, year: date.getFullYear()})
+		let shifts =  await (activeOnly ? Shift.find({_id: {$in: activeItinerary.shifts}}) : Shift.find())
 		console.log(`Shifts fetched: \n${shifts}`)
 		res.send({shifts})
 	} catch (err) {

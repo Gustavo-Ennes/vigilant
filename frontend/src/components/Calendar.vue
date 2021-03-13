@@ -1,8 +1,15 @@
 <template>
-  <section class='customDiv'>
+  <section>
     <b-row>
       <b-col cols=12>
-        <h1 class='mb-5'>Itinerary</h1>
+        <h1 class='mb-1'>
+          {{label}}
+        </h1>
+        <small class='mb-4'>
+          - {{getDayShifts(-1).length}} shifts total
+          <br/>
+          - {{getPendingShifts(-1).length}} shifts pending
+        </small>
       </b-col>
       <b-col v-for='label in daysLabel' :key='`label-${label}`'>
         <h3 class='text-center'>{{ label }}</h3>
@@ -10,7 +17,14 @@
     </b-row>
     <b-row v-for='week in getMonthMatrix()' :key='`week-${week.number}`'>
       <b-col v-for='day in week.days' :key='`day-${day.number}`'>
-        <Day v-if="day" :day='day.number' :label='day.label'/>
+        <Day 
+        v-if="day" 
+        :day='day.number' 
+        :label='day.label'
+        :shifts='getDayShifts(day.number)'
+        :pending='getPendingShifts(day.number)'
+        :place='place'
+        />
       </b-col>
     </b-row>
   </section>
@@ -22,7 +36,7 @@ import Day from './Day'
 
 export default {
   name: "Calendar",
-  props:['qtdDays', 'activeItinerary', 'howManyWeeks'],
+  props:['qtdDays', 'activeItinerary', 'howManyWeeks', 'type', 'label', 'shifts', 'place'],
   components: {
     Day
   },
@@ -31,7 +45,29 @@ export default {
       daysLabel: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     }
   },
-  methods:{
+  methods:{    
+    // a negative day parameter will return the intire month pending shifts
+    getPendingShifts(day){
+      if(day === null || 0){day = 1}
+      let shifts = []
+      for(let i = 0; i < this.shifts.length; i++){
+        if((this.shifts[i].day === day && this.shifts[i].vigilantID === null)  || (this.shifts[i].vigilantID === null && day < 0)){
+          shifts.push(this.shifts[i])
+        }
+      }
+      console.log(`Pending shifts of day ${day}:\n${shifts}`)
+      return shifts
+    },
+    getDayShifts(day){
+      if(day === null || 0){day = 1}
+      let shifts = []
+      for(let i =0; i < this.shifts.length; i++){
+        if(this.shifts[i].day === day || day < 0){
+          shifts.push(this.shifts[i])
+        }
+      }
+      return shifts
+    },
 
     //  please do not touch this
     getMonthMatrix(){
@@ -88,6 +124,7 @@ export default {
       let weeks = []
       let week = []
       let weekCounter = 1
+      console.log("Qtd days: " + this.qtdDays)
       for(let day = 1; day <= this.qtdDays; day++){
         if(this.getDayName(day) === "Sunday" && day !== 1){
           weeks.push({
@@ -115,7 +152,7 @@ export default {
 
     },
     getDateString(day){
-      return `05/${day}/${this.activeItinerary.year}`
+      return `${this.activeItinerary.month}/${day}/${this.activeItinerary.year}`
     },
     showData(){
       console.log("Day name if day == 1: " + this.getDayName(1))
@@ -127,7 +164,7 @@ export default {
     }
   },
   mounted(){
-    // this.showData()
+     this.showData()
   }
 }
 </script>

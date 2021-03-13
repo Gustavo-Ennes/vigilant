@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const apiRouter = require('./routes/apiRoutes');
-const itineraryBuilder = require('./utils/ItineraryBuilder')
+const apiRouter = require('./routes/apiRoutes')
 const app = express();
 const port = process.env.PORT || 5000;
 
