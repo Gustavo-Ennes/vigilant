@@ -18,6 +18,7 @@
             :reference="ref"
             :isPending="isPending(ref)"
             :day='day'
+            :place='place'
             />
           </b-col>
         </b-row>

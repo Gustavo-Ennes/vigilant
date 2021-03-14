@@ -48,7 +48,7 @@ async function build(){
       year: date.getFullYear()
     }
     let shifts = await createShifts(numOfDays, places)
-    console.log("Shifts ids:\n" + shifts)
+    console.log("Shifts ids:\n" + shifts.length)
     payload.shifts = shifts
     await Itinerary.create(payload)
     console.log(`Itinerary created: ${numOfDays} days, ${shifts.length} shifts.`)

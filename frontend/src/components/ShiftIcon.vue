@@ -4,35 +4,30 @@
   cols='12' 
   v-if="isNigth(reference)" 
   class='text-center'
-  v-b-tooltip.hover.bottom="`Click to schedule a vigilant to ${reference}`"
-  @click="handleClick">
-    <i class="fas fa-moon text-success dayIcon" v-bind:class="{'text-danger': isPending}"></i><br/>
-    <small class='text-success referenceIcon' v-bind:class="{'text-danger': isPending}">{{reference}}</small>
+  v-b-tooltip.hover.bottom="getTooltipText()">
+    <ModalVigilant :isPending='isPending' :reference="reference" :day='day' :isNigth='true' :place='place'/>
   </b-col>
   <b-col 
   cols='12' 
   v-if="isDay(reference)" 
   class='text-center' 
-  v-b-tooltip.hover.top="`Click to schedule a vigilant to ${reference}`"
-  @click="handleClick">
-    <i class="fas fa-sun text-success dayIcon" v-bind:class="{'text-danger' : isPending}"></i><br/>
-    <small class='text-success referenceIcon' v-bind:class="{'text-danger': isPending}">{{reference}}</small>
+  v-b-tooltip.hover.top="getTooltipText()">
+    <ModalVigilant :isPending='isPending' :reference="reference" :day='day' :isNigth='false' :place='place'/>
   </b-col>
 </b-row>
 </template>
 
 <script>
+import ModalVigilant from './ModalVigilant'
 export default {
   name: "ShiftIcon",
-  props: ['reference', 'isPending', 'day'],
+  components:{
+    ModalVigilant
+  },
+  props: ['reference', 'isPending', 'day', 'place'],
   methods:{
-    async handleClick(){
-      let payload = {
-        reference: this.reference,
-        isPending: this.isPending,
-        day: this.day
-      }
-      await this.$emit("scheduleAVigilant", payload)
+    getTooltipText(){
+        return this.isPending ? `Click to schedule a vigilant to ${this.reference.toLowerCase()}` : `${this.nameSelected} is scheduled in ${this.reference.toLowerCase()}`
     },
     isNigth(ref){
       return (ref === 'Evening' || ref === 'Dawn')
@@ -45,11 +40,8 @@ export default {
 </script>
 
 <style>
-  .dayIcon{
-    font-size:20px;
-  }
-  .referenceIcon{
-    font-size:12px;
+  b-form-select{
+    width: 100%;
   }
 
 </style>

@@ -55,7 +55,6 @@ export default {
           shifts.push(this.shifts[i])
         }
       }
-      console.log(`Pending shifts of day ${day}:\n${shifts}`)
       return shifts
     },
     getDayShifts(day){
@@ -74,7 +73,6 @@ export default {
       const weeks = this.getWeeks()
       let matrix = []
       let negativeNumbers = -1
-      console.log("Weeks before loop: " + JSON.stringify(weeks))
       for(let i = 0; i < this.howManyWeeks; i++){
         let week = {
           number: i + 1,
@@ -110,7 +108,6 @@ export default {
             })
           }
         }
-        console.log(`Matrix week ${i + 1} added =  ${JSON.stringify(week)}`)
         matrix.push(week)
       }
       return matrix
@@ -124,7 +121,6 @@ export default {
       let weeks = []
       let week = []
       let weekCounter = 1
-      console.log("Qtd days: " + this.qtdDays)
       for(let day = 1; day <= this.qtdDays; day++){
         if(this.getDayName(day) === "Sunday" && day !== 1){
           weeks.push({
@@ -164,7 +160,7 @@ export default {
     }
   },
   mounted(){
-     this.showData()
+     // this.showData()
   }
 }
 </script>

@@ -42,7 +42,7 @@ router.get('/shifts/', async(req,res) => {
 		let activeOnly = Object.keys(req.query).includes('active')
 		let activeItinerary = await Itinerary.findOne({month:date.getMonth() + 1, year: date.getFullYear()})
 		let shifts =  await (activeOnly ? Shift.find({_id: {$in: activeItinerary.shifts}}) : Shift.find())
-		console.log(`Shifts fetched: \n${shifts}`)
+		console.log(`Shifts fetched: \n${shifts.length}`)
 		res.send({shifts})
 	} catch (err) {
 			console.log("Erro at fetching shifts:\n" + err)
@@ -52,7 +52,7 @@ router.get('/shifts/', async(req,res) => {
 router.get('/place/', async(req,res) => {
     try {
         let places = await Place.find()
-        console.log(`Places fetched: \n${places}`)
+        console.log(`Places fetched: \n${places.length}`)
         res.send({places})
     } catch (err) {
         console.log("Erro at fetching places:\n" + err)
@@ -62,7 +62,7 @@ router.get('/place/', async(req,res) => {
 router.get('/vigilant/', async(req,res) => {
     try {
         let vigilants = await Vigilant.find();
-        console.log(`Vigilants fetched: \n${vigilants}`)
+        console.log(`Vigilants fetched: \n${vigilants.length}`)
         res.send({vigilants})
     } catch (err) {
         console.log("Erro at fetching vigilants:\n" + err)
@@ -99,6 +99,15 @@ router.post('/vigilant/', async(req,res) => {
 	}
 })
 
+router.post("/shifts/", async(req,res)=>{
+	try{
+		const shift = await Shift.create(req.body);
+		res.send({shift});
+	}catch{
+		res.status(400).send({error:  "Impossible to create a shift.\n" + err})
+	}
+})
+
 
 ////////////DELETES////////////
 
@@ -125,10 +134,20 @@ router.delete('/place/', async(req, res) => {
 router.delete('/vigilant/', async(req, res) => {
 	try{
 		await Vigilant.deleteOne({_id: req.query._id});
-        const vigilants = await Vigilant.find();
-        res.send({vigilants})
+		const vigilants = await Vigilant.find();
+		res.send({vigilants})
 	}catch(err){
 		console.log(`error: Impossible to delete a vigilant:\n${err}`)
+	}
+})
+
+router.delete('/shifts/', async(req, res) => {
+	try{
+		await Shift.deleteOne({_id: req.query._id});
+		const shifts = await Shift.find();
+		res.send({shifts})
+	}catch(err){
+		console.log(`error: Impossible to delete a shift:\n${err}`)
 	}
 })
 
@@ -161,6 +180,16 @@ router.put('/vigilant/', async(req,res) => {
 		res.send({vigilant})
 	}catch(err){
 		console.log("Impossible to update a vigilant:\n" + err)
+	}
+})
+
+router.put('/shifts/', async(req,res) => {
+	try{
+		let body = req.body;
+		let shift = await Shift.findOneAndUpdate({_id: req.query._id}, body)
+		res.send({shift})
+	}catch(err){
+		console.log("Impossible to update a shift:\n" + err)
 	}
 })
 

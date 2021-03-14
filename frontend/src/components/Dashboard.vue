@@ -1,6 +1,6 @@
 <template>    
   <b-overlay 
-  :show='$store.state.isLoading' 
+  :show='isLoading' 
   class='vh-100'
   :variant="'dark'"
   :bg-color="'rgba(66, 76, 127, 0.6)'"
@@ -8,32 +8,32 @@
   :blur="'5px'"
   :opacity="'0.9'">
     <b-container fluid>
-      <section v-if="!$store.state.isLoading" class='row justify-content-center'>
+      <section v-if="!isLoading" class='row justify-content-center'>
 
         <div class='col-12 col-lg-4'>
-          <Places :places='$store.state.places'/>
+          <Places :places='places'/>
         </div>
 
         <div class='col-12 col-lg-6'>
-          <Vigilants :vigilants="$store.state.vigilants"/>
+          <Vigilants :vigilants="vigilants"/>
         </div>
 
         <div class='col-12 col-lg-2'>
           <ItineraryResume
-          :currentItinerary='$store.state.activeItinerary'
-          :howManyDays='howManyDays()'
-          :howManyShifts='howManyShifts()'
+          :currentItinerary='activeItinerary'
+          :howManyDays='howManyDays'
+          :howManyShifts='howManyShifts'
           :howManyToSchedule='howManyToSchedule(null)'
           />
         </div>
 
         <div class='col-12 col-lg-12'>
           <b-tabs content-class="mt-3">
-            <b-tab v-for="place in $store.state.places" :key='place._id' :title="`${place.name}`" active>
+            <b-tab v-for="place in places" :key='place._id' :title="`${place.name}`" active>
               <Calendar 
-              :activeItinerary='$store.state.activeItinerary' 
-              :qtdDays='howManyDays()'
-              :howManyWeeks='howManyWeeks()'
+              :activeItinerary='activeItinerary' 
+              :qtdDays='howManyDays'
+              :howManyWeeks='howManyWeeks'
               :type="'place'"
               :label="place.name"
               :shifts='getShiftsByPlace(place)'
@@ -46,7 +46,7 @@
       </section>    
       <section v-else class='vh-100 row justify-content-center align-items-center'>
 
-        <h1 class='col-12 text-center'>Loading {{$store.state.loadingLabel}}...</h1>
+        <h1 class='col-12 text-center'>Loading {{loadingLabel}}...</h1>
 
       </section>
     </b-container>
@@ -61,7 +61,6 @@ import Calendar from './Calendar'
 
 export default {
   name: "Dashboard",
-  props:['url'],
   components:{
     Vigilants,
     Places,
@@ -73,41 +72,62 @@ export default {
       days: ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa']
     }
   },
-  methods:{
-    getShiftsByPlace(place){
-      let shifts = []
-      for(let i = 0; i < this.$store.state.shifts.length; i++){
-        if(this.$store.state.shifts[i].placeID === place._id){
-          shifts.push(this.$store.state.shifts[i])
-        }
-      }
-      return shifts
+  computed:{
+    vigilants(){
+      return this.$store.state.vigilants
+    },
+    places(){
+      return this.$store.state.places
+    },
+    itineraries(){
+      return this.$store.state.itineraries
+    },
+    shifts(){
+      return this.$store.state.shifts
+    },
+    activeItinerary(){
+      return this.$store.state.activeItinerary
+    },
+    activeShifts(){
+      return this.$store.state.activeShifts
+    },
+    isLoading(){
+      return this.$store.state.isLoading
+    },
+    loadingLabel(){
+      return this.$store.state.loadingLabel
     },
     howManyWeeks(){
       let weeks = this.isSunday(1) ? 0 : 1
-      for(let day = 1; day <= this.howManyDays(); day++){
-        if(this.isSunday(day) && (day !== 1 && day !== this.howManyDays())){
+      for(let day = 1; day <= this.howManyDays; day++){
+        if(this.isSunday(day) && (day !== 1 && day !== this.howManyDays)){
           weeks++
         }
       }
       return weeks
     },
-    isSunday(day){
-      return (new Date(`${this.$store.state.activeItinerary.month}/${day}/${this.$store.state.activeItinerary.year}`).getDay() === 0)
-    },
     howManyDays(){
-      return new Date(this.$store.state.activeItinerary['year'], this.$store.state.activeItinerary['month'], 0).getDate()
+      return new Date(this.activeItinerary['year'], this.activeItinerary['month'], 0).getDate()
     },
     howManyShifts(){
-      return this.$store.state.activeShifts.length
+      return this.activeShifts.length
+    },
+    
+    hasActiveItinerary(){
+      return Object.keys(this.activeItinerary).length > 0 ? "Yes" : "No"
+    },
+  },
+  methods:{
+    isSunday(day){
+      return (new Date(`${this.activeItinerary.month}/${day}/${this.activeItinerary.year}`).getDay() === 0)
     },
     // in case of day === null, it returns all pending shifts in active itinerary
     // 
     howManyToSchedule(day){ // of this active itinerary, of course
       let counter = 0
-      for(let i = 0; i < this.$store.state.shifts.length; i++){
-        let shift = this.$store.state.shifts[i]
-        if(this.$store.state.activeItinerary.shifts.includes(shift._id)){
+      for(let i = 0; i < this.shifts.length; i++){
+        let shift = this.shifts[i]
+        if(this.activeItinerary.shifts.includes(shift._id)){
           if(shift.vigilantID === null ){
             if(day === null){
               counter++
@@ -121,16 +141,22 @@ export default {
       }
       return counter
     },
+    getShiftsByPlace(place){
+      let shifts = []
+      for(let i = 0; i < this.shifts.length; i++){
+        if(this.shifts[i].placeID === place._id){
+          shifts.push(this.shifts[i])
+        }
+      }
+      return shifts
+    },
     showData(){
       console.log(JSON.stringify(this.$store.state))
-    },
-    hasActiveItinerary(){
-      return Object.keys(this.$store.state.activeItinerary).length > 0 ? "Yes" : "No"
     }
   },
-  async mounted(){
-    await this.$store.dispatch('fetchAPI', this.url)
-    this.showData()
+  async created(){
+    await this.$store.dispatch('fetchAPI')
+    // this.showData()
   }
 }
 </script>
