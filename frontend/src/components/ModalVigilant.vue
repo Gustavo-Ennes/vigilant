@@ -19,7 +19,7 @@
 
 export default {
   name: 'ModalVigilant',
-  props:['isPending', 'reference', 'day', 'isNigth', 'place'],
+  props:['isPending', 'reference', 'day', 'isNigth', 'place', 'shift'],
   data(){
     return {
       selected: null,
@@ -57,11 +57,14 @@ export default {
     },
     async handleClick(){
       let payload = {
-        _id: this.$store.getters.getShiftByDayAndRef({day:this.day, ref:this.reference})['_id'],
+
+        _id: this.$store.getters.getShiftByDayAndRef({day:this.day, ref:this.reference, placeID: this.place._id})['_id'],
         vigilantID: this.selected
       }
-      this.$store.dispatch("scheduleAVigilant", payload)
+      this.$emit("setLoading", true)
+      await this.$store.dispatch("scheduleAVigilant", payload)
       this.refreshNameSelected()
+      this.$emit("setLoading", false)
     },
   },
   created(){

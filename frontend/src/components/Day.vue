@@ -13,12 +13,13 @@
       </b-col>
       <b-col>
         <b-row>
-          <b-col cols='6' v-for='ref in place.references' :key='`${place.name}${ref}`'>
+          <b-col cols='6' v-for='shift in shifts' :key='`${shift.day}-${shift.reference}-${place._id}`'>
             <ShiftIcon
-            :reference="ref"
-            :isPending="isPending(ref)"
-            :day='day'
+            :reference="shift.reference"
+            :isPending="isPending(shift)"
+            :day='shift.day'
             :place='place'
+            :shift='shift'
             />
           </b-col>
         </b-row>
@@ -38,14 +39,9 @@ export default {
   },
   props:['day', 'label', 'shifts', 'pending', 'place'],
   methods:{
-    isPending(ref){
-      if(this.place.references.includes(ref)){
-        for(let i = 0; i < this.shifts.length; i++){
-          if(this.shifts[i]['reference'] === ref){
-            return this.shifts[i]['vigilantID'] === null
-          }
-        }
-        return false
+    isPending(shift){
+      if(this.place.references.includes(shift.reference)){
+        return shift.vigilantID === null
       }
       return null
     }

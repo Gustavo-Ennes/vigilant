@@ -28,8 +28,16 @@
         </div>
 
         <div class='col-12 col-lg-12'>
-          <b-tabs content-class="mt-3">
-            <b-tab v-for="place in places" :key='place._id' :title="`${place.name}`" active>
+          <b-tabs 
+          content-class="mt-3" 
+          :justified="true"
+          :value="actualTabOpened"
+          >
+            <b-tab 
+            v-for="place in places" 
+            :key='place._id' 
+            :title="`${place.name}`"
+            >
               <Calendar 
               :activeItinerary='activeItinerary' 
               :qtdDays='howManyDays'
@@ -69,7 +77,8 @@ export default {
   },
   data(){
     return{
-      days: ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa']
+      days: ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'],
+      actualTabOpened: 0
     }
   },
   computed:{

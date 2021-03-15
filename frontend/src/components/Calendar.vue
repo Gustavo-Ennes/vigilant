@@ -46,12 +46,12 @@ export default {
     }
   },
   methods:{    
-    // a negative day parameter will return the intire month pending shifts
+    // a negative day parameter will return the entire month pending shifts
     getPendingShifts(day){
       if(day === null || 0){day = 1}
       let shifts = []
       for(let i = 0; i < this.shifts.length; i++){
-        if((this.shifts[i].day === day && this.shifts[i].vigilantID === null)  || (this.shifts[i].vigilantID === null && day < 0)){
+        if((this.shifts[i].day === day && this.shifts[i].placeID&& this.shifts[i].vigilantID === null)  || (this.shifts[i].vigilantID === null && day < 0)){
           shifts.push(this.shifts[i])
         }
       }

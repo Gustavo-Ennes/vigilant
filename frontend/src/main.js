@@ -19,6 +19,8 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    isScheduling: false,
+    schedulingShiftID: null,
     isLoading: false,
     debug:true,
     vigilants: [],
@@ -37,7 +39,13 @@ const store = new Vuex.Store({
       return state.vigilants.find(v => v._id === id)
     },
     getShiftByDayAndRef: (state) => (payload) => {
-      let shift = state.shifts.find(shift => (shift.reference === payload.ref && shift.day === payload.day))
+      let shift = state.shifts.find(
+        shift => (
+          shift.reference === payload.ref
+          && shift.day === payload.day
+          && shift.placeID === payload.placeID
+        )
+      )
       return shift
     }
   },
@@ -64,6 +72,12 @@ const store = new Vuex.Store({
           break
       }
     },
+    setScheduling(state){
+      state.isScheduling = true
+    },
+    unsetScheduling(state){
+      state.isScheduling = false
+    },
     setLoading(state){
       state.isLoading = true
     },
@@ -73,10 +87,14 @@ const store = new Vuex.Store({
     setLoadingLabel(state, label){
       state.loadingLabel = label
     },
+    setSchedulingShiftID(state, id){
+      state.schedulingShiftID = id
+    }
   },
   actions: {
     async scheduleAVigilant({commit, dispatch, getters}, payload){
-      commit("setLoading")
+      commit("setScheduling")
+
       await fetch(`${getters.getURL()}/shifts/?_id=${payload._id}`, {
         method: 'PUT',
         headers: {
@@ -85,67 +103,99 @@ const store = new Vuex.Store({
         body: JSON.stringify(payload)
       })
       console.log(`Vigilant ${payload.vigilantID} scheduled.`)
+      await dispatch('fetchShifts', {active: false, setLoading: false})
+      await dispatch('fetchShifts', {active: true, setLoading: false})
+      commit('unsetScheduling')
 
     },
-    async fetchVigilants({commit, getters}){
+    async fetchVigilants({commit, getters}, setLoading){
       let res = null
-      commit('setLoading')
-      commit('setLoadingLabel', 'vigilants')
+
+      if(setLoading){
+        commit('setLoading')
+        commit('setLoadingLabel', 'vigilants')
+      }
+
       res = await fetch(getters.getURL()  + '/vigilant')
       res = await res.json()
       commit("set", {type: 'v', object: res.vigilants})
-      commit("unsetLoading")
+
+      if(setLoading){
+        commit("unsetLoading")
+      }
     },
-    async fetchPlaces({commit, getters}){
+    async fetchPlaces({commit, getters}, setLoading){
       let res = null
-      commit('setLoading')
-      commit('setLoadingLabel', 'places')
+
+      if(setLoading){
+        commit('setLoading')
+        commit('setLoadingLabel', 'places')
+      }
       res = await fetch(getters.getURL()  + '/place')
       res = await res.json()
       commit("set", {type: 'p', object: res.places})
-      commit("unsetLoading")
+      if(setLoading){
+        commit("unsetLoading")
+      }
     },
-    async fetchItineraries({commit, getters}, active){
+    async fetchItineraries({commit, getters}, payload){
       let res = null
-      commit('setLoading')
 
-      if(active === true){
-        commit('setLoadingLabel', 'active itinerary')
+      if(payload.setLoading){
+        commit('setLoading')
+      }
+
+      if(payload.active === true){
+        if(payload.setLoading){
+          commit('setLoadingLabel', 'active itinerary')
+        }
         res = await fetch(getters.getURL()  + '/itinerary/active')
         res = await res.json()
         commit("set", {type: 'ai', object: res.activeItinerary})  
       }else{
-        commit('setLoadingLabel', 'itineraries')
+        if(payload.setLoading){
+          commit('setLoadingLabel', 'itineraries')
+        }
         res = await fetch(getters.getURL()  + '/itinerary')
         res = await res.json()
         commit("set", {type: 'i', object: res.itineraries})
       }
-      commit("unsetLoading")
+      if(payload.setLoading){
+        commit("unsetLoading")
+      }
     },
-    async fetchShifts({commit, getters}, active){
-
+    async fetchShifts({commit, getters}, payload){
       let res = null
-      commit('setLoading')
-      if(active === true){
-        commit('setLoadingLabel', 'active shifts')
+
+      if(payload.setLoading){
+        commit('setLoading')
+      }
+      if(payload.active === true){
+        if(payload.setLoading){
+          commit('setLoadingLabel', 'active shifts')
+        }
         res = await fetch(`${getters.getURL()}/shifts/?active=${true}`)
         res = await res.json()
         commit("set", {type: 'as', object: res.shifts})   
       }else{
-        commit('setLoadingLabel', 'shifts')
+        if(payload.setLoading){
+          commit('setLoadingLabel', 'shifts')
+        }
         res = await fetch(getters.getURL()  + '/shifts')
         res = await res.json()
         commit("set", {type: 's', object: res.shifts})
       }
-      commit("unsetLoading")
+      if(payload.setLoading){
+        commit("unsetLoading")
+      }
     },
     async fetchAPI({dispatch}){
-      await dispatch('fetchVigilants')
-      await dispatch('fetchPlaces')
-      await dispatch('fetchItineraries', false)
-      await dispatch('fetchItineraries', true)
-      await dispatch('fetchShifts', false)
-      await dispatch('fetchShifts', true)
+      await dispatch('fetchVigilants', true)
+      await dispatch('fetchPlaces', true)
+      await dispatch('fetchItineraries', {active: false, setLoading: true})
+      await dispatch('fetchItineraries', {active: true, setLoading: true})
+      await dispatch('fetchShifts', {active: false, setLoading: true})
+      await dispatch('fetchShifts', {active: true, setLoading: true})
     }
   }
 })
