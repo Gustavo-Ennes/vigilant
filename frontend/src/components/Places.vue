@@ -2,22 +2,28 @@
   <section class='customDiv'>
     <b-row align-h='center'>
       <b-col cols='12'><h1>Places</h1></b-col>
-      <b-col v-if='places'>
+      <b-col cols='12' v-if='places'>
         <div v-for="place in places" :key="place._id">
           <Place :place='place'/>
         </div>
       </b-col>
+      <b-col>
+          <AddButton :type='"place"' />
+      </b-col>  
     </b-row>
   </section>
 </template>
 
 <script>
 import Place from './Place'
+import AddButton from './AddButton'
+
 export default {
   name:'Places',
   props:['places'],
   components: {
-    Place
+    Place,
+    AddButton
   }
 }
 </script>

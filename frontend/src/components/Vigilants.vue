@@ -11,19 +11,24 @@
                 <div v-else>
                     <small>There's no vigilants to show.</small>
                 </div>
-            </b-col>            
+            </b-col>  
+            <b-col>
+                <AddButton :type='"vigilant"' />
+            </b-col>          
         </b-row>
     </section>
 </template>
 
 <script>
 import Vigilant from './Vigilant'
+import AddButton from './AddButton'
 
 export default {
     name:"VigilantList",
     props:["vigilants"],
     components:{
-        Vigilant
+        Vigilant,
+        AddButton
     }
 }
 </script>

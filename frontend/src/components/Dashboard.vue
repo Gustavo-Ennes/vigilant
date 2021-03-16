@@ -3,10 +3,26 @@
   :show='isLoading' 
   class='vh-100'
   :variant="'dark'"
-  :bg-color="'rgba(66, 76, 127, 0.6)'"
-  :spinner-variant="'light'"
   :blur="'5px'"
   :opacity="'0.9'">
+    <template #overlay>
+      <b-row align-v='center' align-h="center">
+        <b-col cols='12'>          
+          <h1 class='text-center text-light my-5'>Vigilant</h1>
+        </b-col>
+        <b-col cols='12'>          
+          <h5 class='text-center text-light mt-5'>Loading {{loadingLabel}}... .</h5>
+        </b-col>
+        <b-col cols='12'>
+          <b-icon 
+          class='w-100 text-center'
+          icon="hourglass-split" 
+          animation="spin" 
+          font-scale="4" 
+          :variant="'light'"></b-icon>
+        </b-col>
+      </b-row>      
+    </template>
     <b-container fluid>
       <section v-if="!isLoading" class='row justify-content-center'>
 
@@ -53,9 +69,7 @@
 
       </section>    
       <section v-else class='vh-100 row justify-content-center align-items-center'>
-
-        <h1 class='col-12 text-center'>Loading {{loadingLabel}}...</h1>
-
+        <b-col class='bg-dark'></b-col>
       </section>
     </b-container>
   </b-overlay>

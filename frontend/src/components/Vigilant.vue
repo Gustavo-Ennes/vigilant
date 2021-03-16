@@ -3,8 +3,8 @@
         <div class="row justify-content-center">
             <small class='col-6'>Name</small>
             <small class='col-6'>Contact</small>
-            <div class='col-6 text-center'>{{ vigilant.name }}</div>
-            <div class='col-6 text-center'>{{ vigilant.contact }}</div>
+            <div class='col-6'>{{ vigilant.name }}</div>
+            <div class='col-6'>{{ vigilant.contact }}</div>
         </div>
     </div>
 </template>

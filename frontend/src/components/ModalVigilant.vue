@@ -5,8 +5,14 @@
       <b-modal 
       :id="`modal-${day}-${reference}-${place.name}`" 
       :title="`Schedule a vigilant to ${this.reference} - ${this.place.name}`"
+      :ok-variant="'light'"
+      :hide-header-close='true'
+      :header-bg-variant="'secondary'"
+      :footer-bg-variant="'secondary'"
+      :body-bg-variant="'ligth'"
+      :header-text-variant="'light'"
       @ok="handleClick">
-        <b-form-select v-model="selected" :options="options"></b-form-select>
+        <b-form-select v-model="selected" :options="options" class='w-100'></b-form-select>
       </b-modal>
     </b-col>
     <b-col cols='12'>
@@ -23,13 +29,27 @@ export default {
   data(){
     return {
       selected: null,
-      options: this.getOptions(),
       nameSelected: this.reference  
     }
   },
   computed:{
     isPendingComputed(){
       return this.selected == null && this.isPending === true
+    },
+    vigilants(){
+      return this.$store.state.vigilants
+    },
+    options(){
+      let opt = []
+      opt.push({value: null, text:'No vigilant'})
+      this.vigilants.map(each => {
+        opt.push({
+          value: each._id,
+          text: each.name
+
+        })
+      })
+      return opt
     }
   },
   methods:{
@@ -40,20 +60,6 @@ export default {
         this.nameSelected = this.reference
       }
       return this.nameSelected
-    },
-    getOptions(){
-      let options = []
-      options.push({
-        value: null,
-        text: 'Not scheduled'
-      })
-      this.$store.state.vigilants.map(each =>{
-        options.push({
-          value: each._id,
-          text: each.name 
-        })
-      })
-      return options
     },
     async handleClick(){
       let payload = {
@@ -69,7 +75,7 @@ export default {
   },
   created(){
     if(!this.isPendingComputed){
-      let shift = this.$store.getters.getShiftByDayAndRef({day: this.day, ref: this.reference})
+      let shift = this.$store.getters.getShiftByDayAndRef({day: this.day, ref: this.reference, placeID: this.place._id})
       this.selected = shift.vigilantID
       console.log("Select name: " + this.nameSelected)
       this.refreshNameSelected()
@@ -78,12 +84,15 @@ export default {
 }
 </script>
 
-<style scooped>
+<style >
   .dayIcon{
     font-size:20px;
   }
   .referenceIcon{
     font-size:14px;
+  }
+  .modal-backdrop{
+    opacity: 0.7;
   }
 
 </style>

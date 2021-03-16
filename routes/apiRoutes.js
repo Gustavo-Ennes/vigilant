@@ -40,9 +40,10 @@ router.get('/shifts/', async(req,res) => {
 	try {
 		let date = new Date()
 		let activeOnly = Object.keys(req.query).includes('active')
+		let text = (activeOnly ? "Active shifts" : "Shifts")
 		let activeItinerary = await Itinerary.findOne({month:date.getMonth() + 1, year: date.getFullYear()})
 		let shifts =  await (activeOnly ? Shift.find({_id: {$in: activeItinerary.shifts}}) : Shift.find())
-		console.log(`Shifts fetched: \n${shifts.length}`)
+		console.log(`${text} fetched: \n${shifts.length}`)
 		res.send({shifts})
 	} catch (err) {
 			console.log("Erro at fetching shifts:\n" + err)
