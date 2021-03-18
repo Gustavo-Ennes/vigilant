@@ -16,8 +16,13 @@ body{
   .sectionTitle {
     background-color: #444 !important;
     color: #ddd !important;
-    margin-bottom:30px !important;
 
+  }
+
+  label{
+    font-size:12px;
+    margin:0;
+    padding:0;
   }
 
   .nav-item, a {

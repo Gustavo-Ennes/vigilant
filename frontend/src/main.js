@@ -19,10 +19,10 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    debug: true,
     isScheduling: false,
     schedulingShiftID: null,
     isLoading: false,
-    debug: true,
     vigilants: [],
     places: [],
     itineraries: [],
@@ -131,6 +131,17 @@ const store = new Vuex.Store({
       });
       await dispatch("fetchVigilants", false);
       await dispatch("fetchItineraries", true);
+    },
+    async deletePlace({commit, getters, dispatch}, id){ 
+      commit("setLoadingLabel", "deleting a place");
+      await fetch(`${getters.getURL()}/place/?_id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        }
+      });
+      await dispatch('fetchAPI')
+      // do the same delete for the vigilants
     },
     async fetchVigilants({ commit, getters }) {
       commit("setLoadingLabel", "the vigilant scheduler");

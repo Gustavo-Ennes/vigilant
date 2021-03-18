@@ -9,11 +9,10 @@
     class="h-100"
   >
     <b-row>
-      <b-col>
+      <b-col class='text-right'>
         <b-button
           v-b-modal="`modalAdd-${type}`"
           :variant="'primary'"
-          :block="true"
         >
           <i class="fas fa-plus"></i>
         </b-button>

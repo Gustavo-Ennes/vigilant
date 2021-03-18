@@ -1,11 +1,32 @@
 <template>
   <div class="vigilant">
-    <div class="row justify-content-center">
-      <small class="col-6">Name</small>
-      <small class="col-6">Contact</small>
-      <div class="col-6">{{ vigilant.name }}</div>
-      <div class="col-6">{{ vigilant.contact }}</div>
-    </div>
+    <b-row>
+
+      <b-col cols='4'>
+        <label >Name</label>
+        <p>{{vigilant.name}}</p>
+      </b-col>
+
+      <b-col cols='4'>
+        <label >Contact</label>
+        <p>{{vigilant.contact}}</p>
+      </b-col>
+
+      <b-col cols='4' class='text-center'>
+        <div>
+          <b-row>
+            <b-col>
+              <i class='fas fa-pen text-secondary' v-b-tooltip.hover :title="`Edit ${vigilantFirstName}`"></i>
+            </b-col>
+            <b-col>
+              <i class='fas fa-trash text-danger' v-b-tooltip.hover :title="`Delete ${vigilantFirstName}`"></i>
+            </b-col>
+          </b-row>
+        </div>
+      </b-col>
+
+    </b-row>
+
   </div>
 </template>
 
@@ -13,6 +34,11 @@
 export default {
   name: "Vigilant",
   props: ["vigilant"],
+  computed:{
+    vigilantFirstName(){
+      return this.vigilant['name'].split(" ")[0]
+    }
+  }
 };
 </script>
 
