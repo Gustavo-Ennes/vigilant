@@ -4,7 +4,7 @@
       <b-button :size="'sm'" v-b-modal="`modal-${day}-${reference}-${place.name}`"
         ><i
           v-bind:class="{
-            'text-danger': isPendingComputed,
+            'text-danger': isPending,
             'fa-sun': !isNigth,
           }"
           class="fas fa-moon text-success dayIcon"
@@ -31,7 +31,7 @@
     <b-col cols="12">
       <small
         class="text-success referenceIcon"
-        v-bind:class="{ 'text-danger': isPendingComputed }"
+        v-bind:class="{ 'text-danger': isPending }"
         >{{ nameSelected }}</small
       >
     </b-col>
@@ -49,9 +49,6 @@ export default {
     };
   },
   computed: {
-    isPendingComputed() {
-      return this.selected == null && this.isPending === true;
-    },
     vigilants() {
       return this.$store.state.vigilants;
     },
@@ -75,7 +72,7 @@ export default {
       } else {
         this.nameSelected = this.reference;
       }
-      return this.nameSelected;
+      return this.nameSelected ? this.nameSelected : this.reference;
     },
     async handleClick() {
       let payload = {

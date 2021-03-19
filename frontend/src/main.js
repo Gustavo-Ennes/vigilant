@@ -141,7 +141,16 @@ const store = new Vuex.Store({
         }
       });
       await dispatch('fetchAPI')
-      // do the same delete for the vigilants
+    },
+    async deleteVigilant({commit, getters, dispatch}, id){
+      commit("setLoadingLabel", "deleting a vigilant");
+      await fetch(`${getters.getURL()}/vigilant/?_id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        }
+      });
+      await dispatch('fetchAPI')
     },
     async fetchVigilants({ commit, getters }) {
       commit("setLoadingLabel", "the vigilant scheduler");

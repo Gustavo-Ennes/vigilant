@@ -7,6 +7,7 @@ const Shift = require('../models/Shift')
 const itineraryBuilder = require('../utils/ItineraryBuilder')
 const createAndIntegrate = require('../utils/createPlaceAndIntegrate')
 const deletePlaceAndUpdateItinerary = require("../utils/deletePlaceAndUpdate")
+const deleteVigilantAndUpdateItinerary = require("../utils/deleteVigilantAndUpdate")
 
 
 // get the entire itinerary
@@ -134,9 +135,8 @@ router.delete('/place/', async(req, res) => {
 
 router.delete('/vigilant/', async(req, res) => {
 	try{
-		await Vigilant.deleteOne({_id: req.query._id});
-		const vigilants = await Vigilant.find();
-		res.send({vigilants})
+		await deleteVigilantAndUpdateItinerary(req.query._id);
+		res.send('ok')
 	}catch(err){
 		console.log(`error: Impossible to delete a vigilant:\n${err}`)
 	}

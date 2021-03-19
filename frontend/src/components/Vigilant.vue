@@ -19,12 +19,15 @@
               <i class='fas fa-pen text-secondary' v-b-tooltip.hover :title="`Edit ${vigilantFirstName}`"></i>
             </b-col>
             <b-col>
-              <i class='fas fa-trash text-danger' v-b-tooltip.hover :title="`Delete ${vigilantFirstName}`"></i>
+              <i 
+              class='fas fa-trash text-danger' 
+              v-b-tooltip.hover 
+              :title="`Delete ${vigilantFirstName}`"
+              @click="handleDelete"></i>
             </b-col>
           </b-row>
         </div>
       </b-col>
-
     </b-row>
 
   </div>
@@ -37,6 +40,11 @@ export default {
   computed:{
     vigilantFirstName(){
       return this.vigilant['name'].split(" ")[0]
+    }
+  },
+  methods:{
+    async handleDelete(){
+      await this.$store.dispatch("deleteVigilant", this.vigilant._id)
     }
   }
 };

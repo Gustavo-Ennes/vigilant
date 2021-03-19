@@ -3,7 +3,7 @@
     :show="isLoading"
     :variant="'dark'"
     :bg-color="'transparent'"
-    :spinner-variant="isPending ? 'danger' : 'success'"
+    :spinner-variant="isReallyPending ? 'danger' : 'success'"
     :blur="'5px'"
     :opacity="'0.9'"
   >
@@ -12,10 +12,10 @@
         cols="12"
         v-if="isNigth(reference)"
         class="text-center"
-        v-b-tooltip.hover.bottom="getTooltipText()"
+        v-b-tooltip.hover.bottom="getTooltipText"
       >
         <ModalVigilant
-          :isPending="isPending"
+          :isPending="isReallyPending"
           :reference="reference"
           :day="day"
           :isNigth="true"
@@ -28,10 +28,10 @@
         cols="12"
         v-if="isDay(reference)"
         class="text-center"
-        v-b-tooltip.hover.top="getTooltipText()"
+        v-b-tooltip.hover.top="getTooltipText"
       >
         <ModalVigilant
-          :isPending="isPending"
+          :isPending="isReallyPending"
           :reference="reference"
           :day="day"
           :isNigth="false"
@@ -57,20 +57,25 @@ export default {
     ModalVigilant,
   },
   props: ["reference", "isPending", "day", "place", "shift"],
+  computed:{
+    isReallyPending(){
+      return this.isPending && this.$store.getters.getVigilantByID(this.shift.vigilantID) === undefined
+    },
+    getTooltipText() {
+      return this.isReallyPending
+        ? `Click to schedule a vigilant to ${this.reference.toLowerCase()}`
+        : `${this.getNameOfAVigilantByID(
+            this.shift.vigilantID
+          )} is scheduled in ${this.reference.toLowerCase()}`;
+    },
+  },
   methods: {
     setLoading(value) {
       this.isLoading = value;
     },
     getNameOfAVigilantByID(id) {
       let v = this.$store.getters.getVigilantByID(id);
-      return v.name.split(" ")[0];
-    },
-    getTooltipText() {
-      return this.isPending
-        ? `Click to schedule a vigilant to ${this.reference.toLowerCase()}`
-        : `${this.getNameOfAVigilantByID(
-            this.shift.vigilantID
-          )} is scheduled in ${this.reference.toLowerCase()}`;
+      return v ? v.name.split(" ")[0] : this.reference;
     },
     isNigth(ref) {
       return ref === "Evening" || ref === "Dawn";
