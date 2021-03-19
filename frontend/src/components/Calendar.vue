@@ -1,33 +1,62 @@
-<template>
-  <section>
-    <b-row>
-      <b-col cols="12" class="sectionTitle py-2">
-        <h4 class="mb-1 mt-0">
-          {{ label }}
-        </h4>
-        <p class="mb-4">
-          - {{ getDayShifts(-1).length }} shifts total
-          <br />
-          - {{ getPendingShifts(-1).length }} shifts pending
-        </p>
-      </b-col>
-      <b-col v-for="label in daysLabel" :key="`label-${label}`">
-        <h4 class="text-center">{{ label }}</h4>
-      </b-col>
-    </b-row>
-    <b-row v-for="week in getMonthMatrix" :key="`week-${week.number}`">
-      <b-col v-for="day in week.days" :key="`day-${day.number}`">
-        <Day
-          v-if="day"
-          :day="day.number"
-          :label="day.label"
-          :shifts="getDayShifts(day.number)"
-          :pending="getPendingShifts(day.number)"
-          :place="place"
-        />
-      </b-col>
-    </b-row>
-  </section>
+<template>  
+  <b-overlay
+    :show="isLoading"
+    :variant="'dark'"
+    :blur="'5px'"
+    :opacity="'0.9'"
+  >
+
+    <template #overlay>
+      <b-row align-v="center" align-h="center">
+        <b-col cols="12">
+          <h5 class="text-center text-light my-5">
+            {{ loadingLabel }}
+          </h5>
+        </b-col>
+        <b-col cols="12">
+          <b-icon
+            class="w-100 text-center"
+            icon="binoculars"
+            animation="fade"
+            font-scale="5"
+            :variant="'light'"
+            :rotate="'180'"
+          ></b-icon>
+        </b-col>
+      </b-row>
+    </template>
+
+
+    <section>
+      <b-row>
+        <b-col cols="12" class="sectionTitle py-2">
+          <h4 class="mb-1 mt-0">
+            {{ label }}
+          </h4>
+          <p class="mb-4">
+            - {{ getDayShifts(-1).length }} shifts total
+            <br />
+            - {{ getPendingShifts(-1).length }} shifts pending
+          </p>
+        </b-col>
+        <b-col v-for="label in daysLabel" :key="`label-${label}`">
+          <h4 class="text-center">{{ label }}</h4>
+        </b-col>
+      </b-row>
+      <b-row v-for="week in getMonthMatrix" :key="`week-${week.number}`">
+        <b-col v-for="day in week.days" :key="`day-${day.number}`">
+          <Day
+            v-if="day"
+            :day="day.number"
+            :label="day.label"
+            :shifts="getDayShifts(day.number)"
+            :pending="getPendingShifts(day.number)"
+            :place="place"
+          />
+        </b-col>
+      </b-row>
+    </section>
+  </b-overlay>
 </template>
 
 <script>
@@ -61,7 +90,13 @@ export default {
     };
   },
   computed: {
-     //  please do not touch this
+    loadingLabel(){
+      return this.$store.state.loadingLabel
+    },
+    isLoading(){
+      return this.$store.state.isAComponentLoading === true && this.$store.state.componentLoading === 'calendar'
+    },
+    //  please do not touch this
     getMonthMatrix() {
       const weeks = this.getWeeks();
       let matrix = [];

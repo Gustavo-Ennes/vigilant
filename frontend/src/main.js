@@ -23,6 +23,8 @@ const store = new Vuex.Store({
     isScheduling: false,
     schedulingShiftID: null,
     isLoading: false,
+    isAComponentLoading: false,
+    loadingComponent: null,
     vigilants: [],
     places: [],
     itineraries: [],
@@ -73,6 +75,15 @@ const store = new Vuex.Store({
           break;
       }
     },
+    unsetComponentLoading(state){
+      state.isAComponentLoading = false
+    },
+    setComponentLoading(state){
+      state.isAComponentLoading = true
+    },
+    setLoadingComponentName(state, label){
+      state.loadingComponent = label
+    },
     setScheduling(state) {
       state.isScheduling = true;
     },
@@ -111,6 +122,8 @@ const store = new Vuex.Store({
     },
     async addPlace({ dispatch, getters, commit }, payload) {
       commit('setLoadingLabel', `Creating ${payload.name} shifts...`)
+      commit("setLoadingComponentName", 'place')
+      commit("setComponentLoading")
       await fetch(`${getters.getURL()}/place`, {
         method: "POST",
         headers: {
@@ -118,10 +131,14 @@ const store = new Vuex.Store({
         },
         body: JSON.stringify(payload),
       });
+      commit("setLoadingComponentName", 'calendar')
       await dispatch('fetchAPI')
+      commit("unsetComponentLoading")
     },
     async addVigilant({ dispatch, getters, commit }, payload) {
       commit("setLoadingLabel", "a vigilant creator");
+      commit("setLoadingComponentName", 'vigilant')
+      commit("setComponentLoading")
       await fetch(`${getters.getURL()}/vigilant`, {
         method: "POST",
         headers: {
@@ -129,28 +146,38 @@ const store = new Vuex.Store({
         },
         body: JSON.stringify(payload),
       });
+      commit("setLoadingComponentName", 'calendar')
       await dispatch("fetchVigilants", false);
       await dispatch("fetchItineraries", true);
+      commit("unsetComponentLoading")
     },
     async deletePlace({commit, getters, dispatch}, id){ 
       commit("setLoadingLabel", "deleting a place");
+      commit("setLoadingComponentName", 'place')
+      commit("setComponentLoading")
       await fetch(`${getters.getURL()}/place/?_id=${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         }
       });
+      commit("setLoadingComponentName", 'calendar')
       await dispatch('fetchAPI')
+      commit("unsetComponentLoading")
     },
     async deleteVigilant({commit, getters, dispatch}, id){
       commit("setLoadingLabel", "deleting a vigilant");
+      commit("setLoadingComponentName", 'vigilant')
+      commit("setComponentLoading")
       await fetch(`${getters.getURL()}/vigilant/?_id=${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         }
       });
+      commit("setLoadingComponentName", 'calendar')
       await dispatch('fetchAPI')
+      commit("unsetComponentLoading")
     },
     async fetchVigilants({ commit, getters }) {
       commit("setLoadingLabel", "the vigilant scheduler");
