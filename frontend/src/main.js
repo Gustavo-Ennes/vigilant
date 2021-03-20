@@ -32,6 +32,7 @@ const store = new Vuex.Store({
     activeItinerary: {},
     shifts: [],
     activeShifts: [],
+    shiftLabelHover: null,
   },
   getters: {
     getURL: (state) => () => {
@@ -74,6 +75,26 @@ const store = new Vuex.Store({
           state.activeShifts = payload.object;
           break;
       }
+    },
+    setShiftLabelHovering(state, reference){
+      switch(reference){
+        case 'Dawn':
+          state.shiftLabelHover = '01'
+          break
+        case "Morning":
+          state.shiftLabelHover = '02'
+          break
+        case "Afternoon":
+          state.shiftLabelHover = '03'
+          break
+        case "Evening":
+          state.shiftLabelHover = '04'
+          break
+        default:break
+      }
+    },
+    unsetShiftLabeHovering(state){
+      state.shiftLabelHover = null
     },
     unsetComponentLoading(state){
       state.isAComponentLoading = false

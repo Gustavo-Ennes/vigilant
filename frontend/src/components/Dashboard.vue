@@ -50,7 +50,7 @@
 
         <div class="col-12 col-lg-12">
           <b-tabs
-            content-class="mt-3"
+            class='mt-5'
             :justified="true"
             :value="actualTabOpened"
           >

@@ -1,47 +1,31 @@
 <template>
-  <b-overlay
-    :show="isLoading"
-    :variant="'dark'"
-    :bg-color="'transparent'"
-    :spinner-variant="isReallyPending ? 'danger' : 'success'"
-    :blur="'5px'"
-    :opacity="'0.9'"
-  >
-    <b-row>
-      <b-col
-        cols="12"
-        v-if="isNigth(reference)"
-        class="text-center"
-        v-b-tooltip.hover.bottom="getTooltipText"
+  <b-row>
+    <b-col
+      cols="12"
+      class="text-center"
+      v-b-tooltip.hover.bottom="getTooltipText"
+    >
+      <b-overlay
+        :show="isLoading"
+        :variant="'dark'"
+        :bg-color="'transparent'"
+        :spinner-variant="'light'"
+        :blur="'5px'"
+        :opacity="'0.9'"
+        :spinner-small='true'
       >
         <ModalVigilant
           :isPending="isReallyPending"
           :reference="reference"
           :day="day"
-          :isNigth="true"
           :place="place"
           :shift="shift"
           @setLoading="setLoading"
+          v-b-hover="hoverHandle"
         />
-      </b-col>
-      <b-col
-        cols="12"
-        v-if="isDay(reference)"
-        class="text-center"
-        v-b-tooltip.hover.top="getTooltipText"
-      >
-        <ModalVigilant
-          :isPending="isReallyPending"
-          :reference="reference"
-          :day="day"
-          :isNigth="false"
-          :place="place"
-          :shift="shift"
-          @setLoading="setLoading"
-        />
-      </b-col>
-    </b-row>
-  </b-overlay>
+      </b-overlay>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -70,6 +54,13 @@ export default {
     },
   },
   methods: {
+    hoverHandle(isHovered){
+      if(isHovered){
+        this.$store.commit("setShiftLabelHovering", this.reference)
+      }else{
+        this.$store.commit("unsetShiftLabeHovering", this.reference)
+      }
+    },
     setLoading(value) {
       this.isLoading = value;
     },
@@ -88,7 +79,11 @@ export default {
 </script>
 
 <style>
-b-form-select {
-  width: 100%;
-}
+  b-form-select {
+    width: 100%;
+  }
+
+  b-overlay{
+    max-height: 30px;
+  }
 </style>

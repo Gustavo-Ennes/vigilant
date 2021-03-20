@@ -29,10 +29,10 @@
 
     <section class="customDiv">
       <b-row>
-        <b-col cols="12" class="sectionTitle"><h4 class='py-2'>Vigilants</h4></b-col>
+        <b-col cols="12"><h4  class="sectionTitle">Vigilants</h4></b-col>
         <b-col cols="12">
           <div v-if="vigilants">
-            <div v-for="vigilant in vigilants" :key="vigilant._id">
+            <div class='vigilantsWrapper' v-for="vigilant in vigilants" :key="vigilant._id">
               <Vigilant :vigilant="vigilant" />
             </div>
           </div>
@@ -69,3 +69,7 @@ export default {
   },
 };
 </script>
+
+<style lang='css' scoped>
+
+</style>

@@ -1,15 +1,11 @@
 <template>
   <b-row>
     <b-col cols="12">
-      <b-button :size="'sm'" v-b-modal="`modal-${day}-${reference}-${place.name}`"
-        ><i
-          v-bind:class="{
-            'text-danger': isPending,
-            'fa-sun': !isNigth,
-          }"
-          class="fas fa-moon text-success dayIcon"
-        ></i
-      ></b-button>
+      <i 
+      class='far fa-thumbs-down btnCalendar' 
+      :class="[{'fa-thumbs-up': !isPending},{'text-success': !isPending}]"
+      v-b-modal="`modal-${day}-${reference}-${place.name}`"
+        ></i>
       <b-modal
         :id="`modal-${day}-${reference}-${place.name}`"
         :title="`Schedule a vigilant to ${this.reference} - ${this.place.name}`"
@@ -32,7 +28,7 @@
       <small
         class="text-success referenceIcon"
         v-bind:class="{ 'text-danger': isPending }"
-        >{{ nameSelected }}</small
+        >{{ referenceNumber }}</small
       >
     </b-col>
   </b-row>
@@ -41,14 +37,31 @@
 <script>
 export default {
   name: "ModalVigilant",
-  props: ["isPending", "reference", "day", "isNigth", "place", "shift"],
+  props: ["isPending", "reference", "day", "place", "shift"],
   data() {
     return {
       selected: null,
-      nameSelected: this.reference,
     };
   },
   computed: {
+    referenceNumber(){
+      let i = null
+      switch(this.reference){
+        case 'Dawn':
+          i = '01'
+          break
+        case 'Morning':
+          i = '02'
+          break
+        case 'Afternoon':
+          i = '03'
+          break
+        case 'Evening':
+          i = '04'
+          break
+      }
+      return i
+    },
     vigilants() {
       return this.$store.state.vigilants;
     },
@@ -65,15 +78,6 @@ export default {
     },
   },
   methods: {
-    refreshNameSelected() {
-      if (this.selected != null) {
-        this.nameSelected = this.$store.getters
-          .getVigilantByID(this.selected)["name"].split(" ")[0];
-      } else {
-        this.nameSelected = this.reference;
-      }
-      return this.nameSelected ? this.nameSelected : this.reference;
-    },
     async handleClick() {
       let payload = {
         _id: this.$store.getters.getShiftByDayAndRef({
@@ -85,7 +89,6 @@ export default {
       };
       this.$emit("setLoading", true);
       await this.$store.dispatch("scheduleAVigilant", payload);
-      this.refreshNameSelected();
       this.$emit("setLoading", false);
     },
   },
@@ -97,8 +100,6 @@ export default {
         placeID: this.place._id,
       });
       this.selected = shift.vigilantID;
-      console.log("Select name: " + this.nameSelected);
-      this.refreshNameSelected();
     }
   },
 };

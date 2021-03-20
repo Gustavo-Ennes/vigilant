@@ -2,34 +2,29 @@
   <div class="vigilant">
     <b-row>
 
-      <b-col cols='4'>
-        <label >Name</label>
-        <p>{{vigilant.name}}</p>
+      <b-col cols='4' lg='6'>
+        <p><i class="far fa-id-badge text-secondary"></i> {{vigilant.name}}</p>
       </b-col>
 
-      <b-col cols='4'>
-        <label >Contact</label>
-        <p>{{vigilant.contact}}</p>
+      <b-col cols='4' lg='4'>
+        <p><i class='fas fa-phone text-secondary'></i> {{vigilant.contact}}</p>
       </b-col>
 
-      <b-col cols='4' class='text-center'>
-        <div>
-          <b-row>
-            <b-col>
-              <i class='fas fa-pen text-secondary' v-b-tooltip.hover :title="`Edit ${vigilantFirstName}`"></i>
-            </b-col>
-            <b-col>
-              <i 
-              class='fas fa-trash text-danger' 
-              v-b-tooltip.hover 
-              :title="`Delete ${vigilantFirstName}`"
-              @click="handleDelete"></i>
-            </b-col>
-          </b-row>
-        </div>
+      <b-col cols='4' lg='2' class='text-center'>
+        <b-row>
+          <b-col>
+            <i class='fas fa-pen text-secondary' v-b-tooltip.hover :title="`Edit ${vigilantFirstName}`"></i>
+          </b-col>
+          <b-col>
+            <i 
+            class='fas fa-trash text-danger' 
+            v-b-tooltip.hover 
+            :title="`Delete ${vigilantFirstName}`"
+            @click="handleDelete"></i>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
-
   </div>
 </template>
 
@@ -49,10 +44,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.vigilant {
-  margin: 5px;
-  padding: 5px;
-}
-</style>

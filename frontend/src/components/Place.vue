@@ -1,17 +1,11 @@
 <template>
   <div class="place">
     <b-row>
-      <b-col cols='4'>
-        <label >Name</label>
-        <p>{{place.name}}</p>
+      <b-col cols='6' lg='9'>
+        <p><i class='fas fa-map-pin text-secondary'></i> {{place.name}}</p>
       </b-col>
 
-      <b-col cols='4'>
-        <label >Address</label>
-        <p>{{place.address}}</p>
-      </b-col>
-
-      <b-col cols='4' class='text-center'>
+      <b-col cols='6' lg='3' class='text-center'>
         <div>
           <b-row>
             <b-col>
@@ -43,9 +37,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.place {
-  padding: none !important;
-}
-</style>

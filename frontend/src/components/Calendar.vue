@@ -29,7 +29,8 @@
 
     <section>
       <b-row>
-        <b-col cols="12" class="sectionTitle py-2">
+
+        <b-col cols="6" lg='4' class="sectionTitle py-2">
           <h4 class="mb-1 mt-0">
             {{ label }}
           </h4>
@@ -39,11 +40,50 @@
             - {{ getPendingShifts(-1).length }} shifts pending
           </p>
         </b-col>
+
+        <b-col cols='6' lg='8'>
+          <div class='p-2'>
+            <b-row align-h='center' class='text-center text-secondary'>
+
+              <b-col :class='{"text-info": hovering("01")}'>
+                <p :class='{"lead": hovering("01")}'>
+                  <i class='far fa-clock'></i> 01
+                </p>
+                <p>00:00 ~ 06:00</p>
+              </b-col>
+
+              <b-col :class='{"text-info": hovering("02")}'>
+                <p :class='{"lead": hovering("02")}'>
+                  <i class='far fa-clock'></i> 02
+                </p>
+                <p>00:06 ~ 12:00</p>
+              </b-col>
+
+              <b-col :class='{"text-info": hovering("03")}'>
+                <p :class='{"lead": hovering("03")}'>
+                  <i class='far fa-clock'></i> 03
+                </p>
+                <p>12:00 ~ 18:00</p>
+              </b-col>
+
+              <b-col :class='{"text-info": hovering("04")}'>
+                <p :class='{"lead": hovering("04")}'> <i class='far fa-clock'></i> 04
+                </p>
+                <p>18:00 ~ 24:00</p>
+              </b-col>
+            </b-row>
+          </div>
+        </b-col>
+
         <b-col v-for="label in daysLabel" :key="`label-${label}`">
           <h4 class="text-center">{{ label }}</h4>
-        </b-col>
+        </b-col>  
+
       </b-row>
+
+
       <b-row v-for="week in getMonthMatrix" :key="`week-${week.number}`">
+
         <b-col v-for="day in week.days" :key="`day-${day.number}`">
           <Day
             v-if="day"
@@ -143,6 +183,9 @@ export default {
     }
   },
   methods: {
+    hovering(ref){
+      return this.$store.state.shiftLabelHover === ref
+    },
     // a negative day parameter will return the entire month pending shifts
     getPendingShifts(day) {
       if (day === null || 0) {
@@ -228,5 +271,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

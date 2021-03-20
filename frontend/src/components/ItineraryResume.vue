@@ -1,17 +1,32 @@
 <template>
   <section class="customDiv">
-    <b-row align-v="center" align-h="center">
-      <b-col cols="12" class="sectionTitle"><h5 class='py-1 pt-2'>Resume</h5></b-col>
+    <b-row align-h="center">
+      <b-col cols="12"><h4 class='sectionTitle'>Resume</h4></b-col>
       <b-col v-if="currentItinerary">
-        <p>
-          <strong>Ref:</strong> {{ currentItinerary.month }}/{{
-            currentItinerary.year
-          }}
-        </p>
-        <p><strong>Days:</strong> {{ howManyDays }}</p>
-        <p><strong>Shifts: </strong>{{ howManyShifts }}</p>
-        <p>- {{ howManyToSchedule }} pending</p>
-        <p>- {{ howManyScheduled() }} scheduled</p>
+        <div class='resumeWrapper'>
+          <p>
+            <i class='fas fa-info-circle text-secondary'></i> 
+            <strong> Ref:</strong> {{ currentItinerary.month }}/{{
+              currentItinerary.year
+            }}
+          </p>
+          <p>
+            <i class='fas fa-info-circle text-secondary'></i>  <strong>Days:</strong> {{ howManyDays }}
+          </p>
+          <b-row align-v='center'>
+            <b-col cols='6'>
+              <i class='fas fa-info-circle text-secondary'></i>  <strong>Shifts: </strong>
+            </b-col>
+            <b-col class='text-center'>
+              <p> 
+                <i class='far fa-hand-paper text-danger' v-b-tooltip.hover title="Pending shifts"></i> {{ howManyToSchedule }}
+              </p>
+              <p>
+                <i class='far fa-thumbs-up text-success' v-b-tooltip.hover title='Scheduled shifts'></i>  {{ howManyScheduled() }}
+              </p>
+            </b-col>
+          </b-row>          
+        </div>
       </b-col>
       <b-col v-else>There's no current itinerary.</b-col>
     </b-row>

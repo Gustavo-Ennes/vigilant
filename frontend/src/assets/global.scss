@@ -5,17 +5,50 @@ body{
 
   .customDiv {
     box-shadow: 0px 0px 15px 5px rgba(22, 17, 17, 0.3);
-    margin: 15px;
-    padding-right: 15px;
-    padding-left: 15px;
-    padding-bottom: 15px;
     background-color: #e9e9e9;
     border-radius: 5px;
-  }
+    margin-top:20px;
 
-  .sectionTitle {
-    background-color: #444 !important;
-    color: #ddd !important;
+    .sectionTitle{
+      background-color:#555;
+      border-top-left-radius:5px;
+      border-top-right-radius: 5px;
+      padding:5px;
+      color:#aaa;
+    }
+
+    .btn{
+      margin: 10px;
+    }
+
+    .placesWrapper{
+
+      padding-left: 10px;
+      padding-right: 10px;
+
+      .place{
+
+      }
+
+    }
+
+    .vigilantsWrapper{
+
+      padding-left: 10px;
+      padding-right: 10px;
+
+      .vigilant{
+
+      }
+    }
+
+    .resumeWrapper{
+
+      padding-left: 10px;
+      padding-right: 10px;
+
+    }
+
 
   }
 
@@ -23,6 +56,10 @@ body{
     font-size:12px;
     margin:0;
     padding:0;
+  }
+
+  .fas{
+    font-size:15px;
   }
 
   .nav-item, a {
@@ -48,12 +85,32 @@ body{
       text-decoration: none !important;
       color: #ddddff !important;
     }
+  }  
+
+  .btnCalendar{      
+    max-height: 30px;
+    max-width: 30px;
+    margin: 0 !important;
+    color:rgb(200, 30, 30);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4)
   }
   .btn {
     background-color: #777 !important;
     color: #ddd !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
     outline: none !important;
     box-shadow: none !important;
+
+    :visited {
+      text-decoration: none !important;
+      color: #2d3456 !important;
+    }
+    :hover {
+      background-color: #888 !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      color: #7587d8 !important;
+    }
+
+
   }
 }
