@@ -3,7 +3,6 @@
     <b-col
       cols="12"
       class="text-center"
-      v-b-tooltip.hover.bottom="getTooltipText"
     >
       <b-overlay
         :show="isLoading"
@@ -20,8 +19,8 @@
           :day="day"
           :place="place"
           :shift="shift"
+          :past='past'
           @setLoading="setLoading"
-          v-b-hover="hoverHandle"
         />
       </b-overlay>
     </b-col>
@@ -40,33 +39,15 @@ export default {
   components: {
     ModalVigilant,
   },
-  props: ["reference", "isPending", "day", "place", "shift"],
+  props: ["reference", "isPending", "day", "place", "shift", 'past'],
   computed:{
     isReallyPending(){
       return this.isPending && this.$store.getters.getVigilantByID(this.shift.vigilantID) === undefined
-    },
-    getTooltipText() {
-      return this.isReallyPending
-        ? `Click to schedule a vigilant to ${this.reference.toLowerCase()}`
-        : `${this.getNameOfAVigilantByID(
-            this.shift.vigilantID
-          )} is scheduled in ${this.reference.toLowerCase()}`;
-    },
+    }
   },
-  methods: {
-    hoverHandle(isHovered){
-      if(isHovered){
-        this.$store.commit("setShiftLabelHovering", this.reference)
-      }else{
-        this.$store.commit("unsetShiftLabeHovering", this.reference)
-      }
-    },
+  methods: {  
     setLoading(value) {
       this.isLoading = value;
-    },
-    getNameOfAVigilantByID(id) {
-      let v = this.$store.getters.getVigilantByID(id);
-      return v ? v.name.split(" ")[0] : this.reference;
     },
     isNigth(ref) {
       return ref === "Evening" || ref === "Dawn";

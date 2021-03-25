@@ -18,6 +18,8 @@
               <i class='fas fa-info-circle text-secondary'></i>  <strong>Shifts: </strong>
             </b-col>
             <b-col class='text-center'>
+              <p><b-icon icon='calendar2-check-fill' variant="success"></b-icon></p>
+              <p><b-icon icon='calendar2-x-fill' variant='danger'></b-icon></p>
               <p> 
                 <i class='far fa-hand-paper text-danger' v-b-tooltip.hover title="Pending shifts"></i> {{ howManyToSchedule }}
               </p>

@@ -186,9 +186,15 @@ router.put('/vigilant/', async(req,res) => {
 
 router.put('/shifts/', async(req,res) => {
 	try{
+		let day = new Date().getDate()
 		let body = req.body;
-		let shift = await Shift.findOneAndUpdate({_id: req.query._id}, body)
-		res.send({shift})
+		let shift = await Shift.findOne({_id: req.query._id})
+		if(shift.day >= day){
+			await Shift.update({_id: req.query._id}, body)
+			res.send({shift})
+		}else{
+			return res.status(400).send("Impossible to update a yesterday or before shift")
+		}
 	}catch(err){
 		console.log("Impossible to update a shift:\n" + err)
 	}

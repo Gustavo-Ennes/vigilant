@@ -45,31 +45,39 @@
           <div class='p-2'>
             <b-row align-h='center' class='text-center text-secondary'>
 
-              <b-col :class='{"text-info": hovering("01")}'>
-                <p :class='{"lead": hovering("01")}'>
-                  <i class='far fa-clock'></i> 01
-                </p>
-                <p>00:00 ~ 06:00</p>
+              <b-col :class='{"text-warning": hovering("01")}'>
+                <div :class='hovering("01") ? "darkBg" : ""'>
+                  <p :class='{"lead": hovering("01")}'>
+                    <i class='far fa-clock'></i> 01
+                  </p>
+                  <p>00:00 ~ 06:00</p>
+                </div>
               </b-col>
 
-              <b-col :class='{"text-info": hovering("02")}'>
-                <p :class='{"lead": hovering("02")}'>
-                  <i class='far fa-clock'></i> 02
-                </p>
-                <p>00:06 ~ 12:00</p>
+              <b-col :class='{"text-warning": hovering("02")}'>
+                <div :class='hovering("02") ? "darkBg" : ""'>
+                  <p :class='{"lead": hovering("02")}'>
+                    <i class='far fa-clock'></i> 02
+                  </p>
+                  <p>00:06 ~ 12:00</p>
+                </div>
               </b-col>
 
-              <b-col :class='{"text-info": hovering("03")}'>
-                <p :class='{"lead": hovering("03")}'>
-                  <i class='far fa-clock'></i> 03
-                </p>
-                <p>12:00 ~ 18:00</p>
+              <b-col :class='{"text-warning": hovering("03")}'>
+                <div :class='hovering("03") ? "darkBg" : ""'>
+                  <p :class='{"lead": hovering("03")}'>
+                    <i class='far fa-clock'></i> 03
+                  </p>
+                  <p>12:00 ~ 18:00</p>
+                </div>
               </b-col>
 
-              <b-col :class='{"text-info": hovering("04")}'>
-                <p :class='{"lead": hovering("04")}'> <i class='far fa-clock'></i> 04
-                </p>
-                <p>18:00 ~ 24:00</p>
+              <b-col :class='{"text-warning": hovering("04")}'>
+                <div :class='hovering("04") ? "darkBg" : ""'>
+                  <p :class='{"lead": hovering("04")}'> <i class='far fa-clock'></i> 04
+                  </p>
+                  <p>18:00 ~ 24:00</p>
+                </div>
               </b-col>
             </b-row>
           </div>
@@ -92,6 +100,7 @@
             :shifts="getDayShifts(day.number)"
             :pending="getPendingShifts(day.number)"
             :place="place"
+            :past='isDayInPast(day.number)'
           />
         </b-col>
       </b-row>
@@ -183,6 +192,9 @@ export default {
     }
   },
   methods: {
+    isDayInPast(day){
+      return day < new Date().getDate()
+    },
     hovering(ref){
       return this.$store.state.shiftLabelHover === ref
     },
@@ -196,8 +208,9 @@ export default {
         if (
           (this.shifts[i].day === day &&
             this.shifts[i].placeID &&
-            this.shifts[i].vigilantID === null) ||
-          (this.shifts[i].vigilantID === null && day < 0)
+            this.shifts[i].vigilantID === null )
+          ||
+          (this.shifts[i].vigilantID === null && day < 0 && !this.isDayInPast(this.shifts[i].day))
         ) {
           shifts.push(this.shifts[i]);
         }
@@ -205,12 +218,18 @@ export default {
       return shifts;
     },
     getDayShifts(day) {
+      // let payload = {
+      //   day: day,
+        
+      // }
+      // return this.$store.getters.getShifts()
+
       if (day === null || 0) {
         day = 1;
       }
       let shifts = [];
       for (let i = 0; i < this.shifts.length; i++) {
-        if (this.shifts[i].day === day || day < 0) {
+        if (this.shifts[i].day === day || day < 0 && !this.isDayInPast(this.shifts[i].day)) {
           shifts.push(this.shifts[i]);
         }
       }

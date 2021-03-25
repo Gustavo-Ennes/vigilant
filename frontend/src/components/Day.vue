@@ -1,23 +1,28 @@
 <template>
-  <div v-if="day > 0" class="dayDiv text-center">
+  <div v-if="day > 0" class="dayDiv text-center" :class='[{"evtNone": past}, {"pastDay": past}]'>
+
+    <div class='overlay' v-if='past'></div>
+
+
     <b-row>
       <b-col cols='12'>
-        <h1 class='display-4 text-center'>{{ day }}</h1>
+        <h1 class='display-4 text-center' :class='{"text-secondary": past}'>{{ day }}</h1>
       </b-col>
       <b-col cols="12">
         <b-row>
           <b-col cols='12'>            
-            <small >{{ label }}</small>
+            <small :class='{"text-secondary": past}' >{{ label }}</small>
           </b-col>
           <b-col cols='6'>         
-            <small v-if="shifts" class='pt-0'>{{ shifts.length }} shifts</small>
+            <small v-if="shifts && !past" class='pt-0' :class='{"text-secondary": past}'>{{ shifts.length }} shifts</small>
           </b-col>
           <b-col cols='6'>
-            <small v-if="pending"><span class="text-danger">{{ pending.length }} pending</span></small>
-          </b-col>          
+            <small v-if="pending && !past"><span class="text-danger" :class='{"text-secondary": past}'>{{ pending.length }} pending</span></small>
+          </b-col>    
+          <b-col v-if='past'><small>{{shifts.length}} scheduled, {{pending.length}} missed</small></b-col>      
         </b-row>
       </b-col>
-      <b-col>
+      <b-col v-if='!past'>
         <b-row>
           <b-col
             cols='3'
@@ -30,6 +35,7 @@
               :day="shift.day"
               :place="place"
               :shift="shift"
+              :past="past"
             />
           </b-col>
         </b-row>
@@ -47,7 +53,7 @@ export default {
   components: {
     ShiftIcon,
   },
-  props: ["day", "label", "shifts", "pending", "place"],
+  props: ["day", "label", "shifts", "pending", "place", 'past'],
   computed: {    
     reorderedShifts(){
       let s = []
@@ -73,6 +79,14 @@ export default {
     }
   },
   methods: {
+    getRef(ref){
+      return this.$store.getters.referenceNumber(ref)
+    },
+    getName(id){
+      let v = this.$store.getters.getVigilantByID(id)
+      return  v != null ? v.name.split(" ")[0] : "anyone"
+
+    },
     hasRef(ref){
       for(let i = 0; i < this.shifts.length; i++){
         if(this.shifts[i].reference === ref){
@@ -100,8 +114,21 @@ export default {
   margin-bottom:3px;
   margin-right: 1px !important;
   margin-left: 1px !important;
+  min-height: 165px;
 }
 small{
   font-size: 10px;
+}
+.pastDay{
+  background-color:#888 !important;
+}
+p{
+  margin:0 !important;
+}
+.evtNone{
+  pointer-events: none;
+}
+.text-secondary{
+  color:#bbb !important;
 }
 </style>

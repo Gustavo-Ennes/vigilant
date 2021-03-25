@@ -1,10 +1,11 @@
 <template>
   <b-row>
-    <b-col cols="12">
+    <b-col cols="12" v-if="!past">
       <i 
       class='far fa-thumbs-down btnCalendar' 
       :class="[{'fa-thumbs-up': !isPending},{'text-success': !isPending}]"
-      v-b-modal="`modal-${day}-${reference}-${place.name}`"
+      v-b-modal="`modal-${day}-${reference}-${place.name}`"      
+      v-b-tooltip.hover.bottom="getTooltipText"
         ></i>
       <b-modal
         :id="`modal-${day}-${reference}-${place.name}`"
@@ -25,10 +26,13 @@
       </b-modal>
     </b-col>
     <b-col cols="12">
-      <small
-        class="text-success referenceIcon"
-        v-bind:class="{ 'text-danger': isPending }"
-        >{{ referenceNumber }}</small
+      <div
+      v-b-hover="hoverHandle"
+      class="text-success referenceIcon"
+      v-bind:class="{ 'text-danger': isPending }"
+      >
+        {{ referenceNumber }}
+      </div
       >
     </b-col>
   </b-row>
@@ -37,7 +41,7 @@
 <script>
 export default {
   name: "ModalVigilant",
-  props: ["isPending", "reference", "day", "place", "shift"],
+  props: ["isPending", "reference", "day", "place", "shift", 'past'],
   data() {
     return {
       selected: null,
@@ -45,22 +49,7 @@ export default {
   },
   computed: {
     referenceNumber(){
-      let i = null
-      switch(this.reference){
-        case 'Dawn':
-          i = '01'
-          break
-        case 'Morning':
-          i = '02'
-          break
-        case 'Afternoon':
-          i = '03'
-          break
-        case 'Evening':
-          i = '04'
-          break
-      }
-      return i
+      return this.$store.getters.referenceNumber(this.reference)
     },
     vigilants() {
       return this.$store.state.vigilants;
@@ -78,6 +67,24 @@ export default {
     },
   },
   methods: {
+    hoverHandle(isHovered){
+      if(isHovered){
+        this.$store.commit("setShiftLabelHovering", this.reference)
+      }else{
+        this.$store.commit("unsetShiftLabelHovering", this.reference)
+      }
+    },
+    getNameOfAVigilantByID(id) {
+      let v = this.$store.getters.getVigilantByID(id);
+      return v ? v.name.split(" ")[0] : this.reference;
+    },
+    getTooltipText() {
+      return this.isPending
+        ? `Click to schedule a vigilant to ${this.reference.toLowerCase()}`
+        : `${this.getNameOfAVigilantByID(
+            this.shift.vigilantID
+          )} is scheduled in ${this.reference.toLowerCase()}`;
+    },
     async handleClick() {
       let payload = {
         _id: this.$store.getters.getShiftByDayAndRef({
@@ -110,7 +117,9 @@ export default {
   font-size: 20px;
 }
 .referenceIcon {
-  font-size: 11px;
+  font-size: 10px;
+  cursor: pointer;
+
 }
 .modal-backdrop {
   opacity: 0.7;

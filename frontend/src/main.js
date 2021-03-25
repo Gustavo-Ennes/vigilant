@@ -33,8 +33,58 @@ const store = new Vuex.Store({
     shifts: [],
     activeShifts: [],
     shiftLabelHover: null,
+    referenceNumbers: {
+      'Dawn': "01",
+      'Morning': "02",
+      'Afternoon': '03',
+      'Evening': '04'
+    }
   },
   getters: {
+    getShifts: (state) => (payload) => {
+      let s = []
+      let day = payload.day
+      let param = payload.param
+
+      for(let i = 0; i < state.activeShifts; i++){
+        switch(param){
+          case "monthShifts":
+            if(this.activeShifts[i].vigilantID !== null){
+              s.push(this.activeShifts[i])
+            }
+            break
+          case "monthPending":
+            if(this.activeShifts[i].vigilantID === null){
+              s.push(this.activeShifts[i])
+            }
+            break
+          case "pastShifts":
+            if(this.activeShifts[i].vigilantID !== null && this.activeShifts[i].day < day){
+              s.push(this.activeShifts[i])
+            }
+            break
+          case "pastPending":
+            if(this.activeShifts[i].vigilantID === null && this.activeShifts[i].day < day){
+              s.push(this.activeShifts[i])
+            }
+            break
+          case "activeShifts":
+            if(this.activeShifts[i].vigilantID !== null && this.activeShifts[i].day >= day){
+              s.push(this.activeShifts[i])
+            }
+            break
+          case "activePending":
+            if(this.activeShifts[i].vigilantID === null && this.activeShifts[i].day >= day){
+              s.push(this.activeShifts[i])
+            }
+            break
+        }
+      }
+      return s
+    },
+    referenceNumber: (state) => (ref) => {      
+      return state.referenceNumbers[ref]
+    },
     getURL: (state) => () => {
       return state.debug === true
         ? "http://localhost:5000/api"
@@ -93,7 +143,7 @@ const store = new Vuex.Store({
         default:break
       }
     },
-    unsetShiftLabeHovering(state){
+    unsetShiftLabelHovering(state){
       state.shiftLabelHover = null
     },
     unsetComponentLoading(state){
