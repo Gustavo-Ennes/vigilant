@@ -4,10 +4,54 @@ const Itinerary = require('../models/Itinerary')
 const Vigilant = require('../models/Vigilant')
 const Place = require('../models/Place')
 const Shift = require('../models/Shift')
+const User = require('../models/User')
 const itineraryBuilder = require('../utils/ItineraryBuilder')
 const createAndIntegrate = require('../utils/createPlaceAndIntegrate')
 const deletePlaceAndUpdateItinerary = require("../utils/deletePlaceAndUpdate")
 const deleteVigilantAndUpdateItinerary = require("../utils/deleteVigilantAndUpdate")
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (password, saltRounds = 10) => {
+    try {
+        // Generate a salt
+        const salt = await bcrypt.genSalt(saltRounds);
+
+        // Hash password
+        return await bcrypt.hash(password, salt);
+    } catch (error) {
+        console.log(error);
+    }
+
+    // Return null if error
+    return null;
+};
+
+const comparePassword = async (password, hash) => {
+    try {
+        // Compare password
+        return await bcrypt.compare(password, hash);
+    } catch (error) {
+        console.log(error);
+    }
+
+    // Return false if error
+    return false;
+};
+
+
+
+
+function requireLogin (req, res, next) {
+  if (!req.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+};
+
+
+
+
 
 
 // get the entire itinerary
@@ -71,6 +115,16 @@ router.get('/vigilant/', async(req,res) => {
     }
 })
 
+router.get('/logout/', async(req,res) => {
+    req.session.destroy((err) => {
+        if(err) {
+            return console.log(err);
+        }
+    })
+    res.status(200).send()
+
+})
+
 ////////////POSTS///////////////
 
 router.post('/itinerary/', async(req,res) => {
@@ -107,6 +161,33 @@ router.post("/shifts/", async(req,res)=>{
 		res.send({shift});
 	}catch{
 		res.status(400).send({error:  "Impossible to create a shift.\n" + err})
+	}
+})
+
+router.post('/user/', async(req,res) => {
+	try{
+		req.body['password'] = await hashPassword(req.body['password'])
+		let u = await User.create(req.body)
+		res.status(200).send()
+	}catch{
+		res.status(400).send({error:  "Impossible to create a user.\n" + err})
+	}
+})
+
+router.post('/login/', async(req,res) => {
+	try{
+		let user = await User.findOne({name: req.body['name']})
+		let passTest = false
+		let username = user.name
+		if(user){
+			passTest = await comparePassword(req.body['pass'], user['password'])
+			if(passTest){
+				req.session.user = req.body.name
+			}
+		}
+		passTest ? res.send(req.session) : res.status(401).send({'user': null})
+	}catch(err){
+		res.status(400).send({error:  "Impossible to login a user.\n" + err})
 	}
 })
 
@@ -193,7 +274,7 @@ router.put('/shifts/', async(req,res) => {
 			await Shift.update({_id: req.query._id}, body)
 			res.send({shift})
 		}else{
-			return res.status(400).send("Impossible to update a yesterday or before shift")
+			res.status(400).send("Impossible to update a yesterday or before shift")
 		}
 	}catch(err){
 		console.log("Impossible to update a shift:\n" + err)

@@ -19,6 +19,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    user: null,
     debug: true,
     isScheduling: false,
     schedulingShiftID: null,
@@ -41,47 +42,6 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getShifts: (state) => (payload) => {
-      let s = []
-      let day = payload.day
-      let param = payload.param
-
-      for(let i = 0; i < state.activeShifts; i++){
-        switch(param){
-          case "monthShifts":
-            if(this.activeShifts[i].vigilantID !== null){
-              s.push(this.activeShifts[i])
-            }
-            break
-          case "monthPending":
-            if(this.activeShifts[i].vigilantID === null){
-              s.push(this.activeShifts[i])
-            }
-            break
-          case "pastShifts":
-            if(this.activeShifts[i].vigilantID !== null && this.activeShifts[i].day < day){
-              s.push(this.activeShifts[i])
-            }
-            break
-          case "pastPending":
-            if(this.activeShifts[i].vigilantID === null && this.activeShifts[i].day < day){
-              s.push(this.activeShifts[i])
-            }
-            break
-          case "activeShifts":
-            if(this.activeShifts[i].vigilantID !== null && this.activeShifts[i].day >= day){
-              s.push(this.activeShifts[i])
-            }
-            break
-          case "activePending":
-            if(this.activeShifts[i].vigilantID === null && this.activeShifts[i].day >= day){
-              s.push(this.activeShifts[i])
-            }
-            break
-        }
-      }
-      return s
-    },
     referenceNumber: (state) => (ref) => {      
       return state.referenceNumbers[ref]
     },
@@ -123,6 +83,9 @@ const store = new Vuex.Store({
           break;
         case "as":
           state.activeShifts = payload.object;
+          break;
+        case 'u':
+          state.user = payload.object
           break;
       }
     },

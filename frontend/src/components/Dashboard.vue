@@ -5,11 +5,12 @@
     :variant="'dark'"
     :blur="'5px'"
     :opacity="'0.9'"
+    v-if="$store.state.user"
   >
     <template #overlay>
       <b-row align-v="center" align-h="center">
         <b-col cols="12">
-          <h1 class='display-1'>vigilant</h1>
+          <h1 class='display-1 logo'>vigilant</h1>
         </b-col>
         <b-col cols="12">
           <h5 class="text-center text-light my-5">
@@ -30,6 +31,7 @@
     </template>
 
     <b-container fluid>
+      <section class='text-right'><b-button class='m-1' variant='dark' @click="handleLogout">Log out</b-button></section>
       <section v-if="!isLoading" class="row justify-content-center">
         <div class="col-12 col-lg-4">
           <Places :places="places" />
@@ -80,6 +82,12 @@
       </section>
     </b-container>
   </b-overlay>
+
+
+
+  <div v-else>
+    <Login />
+  </div>
 </template>
 
 <script>
@@ -87,6 +95,7 @@ import Vigilants from "./Vigilants.vue";
 import Places from "./Places.vue";
 import ItineraryResume from "./ItineraryResume";
 import Calendar from "./Calendar";
+import Login from "./Login";
 
 export default {
   name: "Dashboard",
@@ -95,6 +104,7 @@ export default {
     Places,
     ItineraryResume,
     Calendar,
+    Login
   },
   data() {
     return {
@@ -154,6 +164,9 @@ export default {
     
   },
   methods: {
+    handleLogout(){
+      this.$store.commit("set", {type: 'u', object: null})
+    },
     getShifts(place){
       let shifts = []
       for(let i = 0; i < this.shifts.length; i++){
@@ -206,11 +219,4 @@ export default {
 
 <style lang="scss">
   @import '../assets/global.scss';  
-  @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
-
-  .display-1{
-    font-family: 'DotGothic16', sans-serif;
-    color:#eee;
-    text-align: center;
-  }
 </style>

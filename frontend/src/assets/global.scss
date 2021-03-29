@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
 body{
 
   background-color: #eee !important;
@@ -116,5 +119,10 @@ body{
 
   .darkBg{
     background-color: rgba(0, 0, 0, 0.6);
+  }
+  .logo{
+    font-family: 'DotGothic16', sans-serif;
+    color:#eee;
+    text-align: center;
   }
 }
