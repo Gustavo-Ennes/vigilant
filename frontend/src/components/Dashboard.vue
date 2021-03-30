@@ -5,7 +5,7 @@
     :variant="'dark'"
     :blur="'5px'"
     :opacity="'0.9'"
-    v-if="$store.state.user"
+    v-if="fetchUser() && !logOut"
   >
     <template #overlay>
       <b-row align-v="center" align-h="center">
@@ -45,8 +45,10 @@
           <ItineraryResume
             :currentItinerary="activeItinerary"
             :howManyDays="howManyDays"
-            :howManyShifts="howManyShifts"
-            :howManyToSchedule="howManyToSchedule(null)"
+            :howManyScheduled="getShiftQtd('s')"
+            :howManyMissed="getShiftQtd('m')"
+            :howManyPending="getShiftQtd('p')"
+            :howManyActive="getShiftQtd('a')"
           />
         </div>
 
@@ -55,6 +57,7 @@
             class='mt-5'
             :justified="true"
             :value="actualTabOpened"
+            :title-item-class="'fas fa-map-marker-alt'"
           >
             <b-tab
               v-for="place in places"
@@ -86,7 +89,7 @@
 
 
   <div v-else>
-    <Login />
+    <Login @login='logOut = false'/>
   </div>
 </template>
 
@@ -109,7 +112,8 @@ export default {
   data() {
     return {
       days: ["su", "mo", "tu", "we", "th", "fr", "sa"],
-      actualTabOpened: 0
+      actualTabOpened: 0,
+      logOut: false
     };
   },
   computed: {
@@ -164,8 +168,27 @@ export default {
     
   },
   methods: {
-    handleLogout(){
-      this.$store.commit("set", {type: 'u', object: null})
+    async fetchUser(){
+      return await this.$store.dispatch('fetchUser', {})
+
+    },
+    getShiftQtd(arg){
+      let date = new Date()
+      let arr = []
+      for(let i = 0; i < this.activeShifts.length; i++){
+        if(
+          (arg === 'a' && (this.activeShifts[i].day >= date.getDate() && this.activeShifts[i].vigilantID !== null)) ||
+          (arg === 'p' && (this.activeShifts[i].day >= date.getDate() && this.activeShifts[i].vigilantID === null)) ||
+          (arg === 's' && (this.activeShifts[i].day < date.getDate() && this.activeShifts[i].vigilantID !== null)) ||
+          (arg === 'm' && (this.activeShifts[i].day < date.getDate() && this.activeShifts[i].vigilantID === null))){
+            arr.push(this.activeShifts[i]);
+        }
+      }
+      return arr.length
+    },
+    async handleLogout(){
+      this.logOut = true
+      await this.$store.dispatch("logOut")
     },
     getShifts(place){
       let shifts = []

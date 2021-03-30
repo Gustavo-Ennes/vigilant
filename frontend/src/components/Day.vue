@@ -6,7 +6,7 @@
 
     <b-row>
       <b-col cols='12'>
-        <h1 class='display-4 text-center' :class='{"text-secondary": past}'>{{ day }}</h1>
+        <h1 class='display-4 text-center' :class='{"text-secondary": past, "todayColor" : isToday}'>{{ day }}</h1>
       </b-col>
       <b-col cols="12">
         <b-row>
@@ -54,7 +54,10 @@ export default {
     ShiftIcon,
   },
   props: ["day", "label", "shifts", "pending", "place", 'past'],
-  computed: {    
+  computed: { 
+    isToday(){
+      return new Date().getDate() === this.day
+    },  
     reorderedShifts(){
       let s = []
       let aux = null
@@ -107,14 +110,12 @@ export default {
 
 <style lang='scss' scoped>
 .dayDiv{
-  border-radius: 10px;
-  border: 1px solid #444;
-  background-color: #ddd;
-  margin-top:3px;
-  margin-bottom:3px;
-  margin-right: 1px !important;
-  margin-left: 1px !important;
   min-height: 165px;
+  background-color: #ddd;
+  border: 1px solid #333;
+}
+.todayColor{
+  color: #100E44;
 }
 small{
   font-size: 10px;

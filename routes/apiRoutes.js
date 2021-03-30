@@ -5,6 +5,7 @@ const Vigilant = require('../models/Vigilant')
 const Place = require('../models/Place')
 const Shift = require('../models/Shift')
 const User = require('../models/User')
+const Session = require('../models/Session')
 const itineraryBuilder = require('../utils/ItineraryBuilder')
 const createAndIntegrate = require('../utils/createPlaceAndIntegrate')
 const deletePlaceAndUpdateItinerary = require("../utils/deletePlaceAndUpdate")
@@ -176,16 +177,34 @@ router.post('/user/', async(req,res) => {
 
 router.post('/login/', async(req,res) => {
 	try{
-		let user = await User.findOne({name: req.body['name']})
+		let user
 		let passTest = false
-		let username = user.name
-		if(user){
-			passTest = await comparePassword(req.body['pass'], user['password'])
-			if(passTest){
-				req.session.user = req.body.name
+		console.log("Body: " + JSON.stringify(req.body))
+		if(Object.keys(req.body).includes('pass') && Object.keys(req.body).includes('name')){
+			user = await User.findOne({name: req.body['name']})
+			if(user){
+				passTest = await comparePassword(req.body['pass'], user['password'])
+				if(passTest){
+					req.session.user = user._id
+					let s = await Session.findOne({user: user._id})
+					if(!s){
+						await Session.create(req.body)
+					}
+				}
+			}
+		}else{
+			console.log("session: " + JSON.stringify(req.session))
+			user = await User.findOne({_id: req.session.user})
+			console.log("User: " + JSON.stringify(user))
+			if(user){
+				let session = await Session.find({user: user._id})
+				console.log(JSON.stringify(session))
+				if(session && req.session.user == user._id){
+					passTest = true
+				}
 			}
 		}
-		passTest ? res.send(req.session) : res.status(401).send({'user': null})
+		passTest ? res.send(req.session) : res.status(401).send({user: null})
 	}catch(err){
 		res.status(400).send({error:  "Impossible to login a user.\n" + err})
 	}

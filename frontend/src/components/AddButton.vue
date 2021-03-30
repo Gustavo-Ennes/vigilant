@@ -202,4 +202,7 @@ export default {
 .modal-backdrop {
   opacity: 0.7;
 }
+.fas{
+  cursor: pointer;
+}
 </style>

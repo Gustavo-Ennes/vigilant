@@ -18,13 +18,13 @@
               <i class='fas fa-info-circle text-secondary'></i>  <strong>Shifts: </strong>
             </b-col>
             <b-col class='text-center'>
-              <p><b-icon icon='calendar2-check-fill' variant="success"></b-icon></p>
-              <p><b-icon icon='calendar2-x-fill' variant='danger'></b-icon></p>
+              <p><b-icon icon='calendar2-check-fill' variant="success" v-b-tooltip.hover title="Scheduled"></b-icon> {{ howManyScheduled }}</p>
+              <p><b-icon icon='calendar2-x-fill' variant='danger' v-b-tooltip.hover title="Missed"></b-icon> {{ howManyMissed }}</p>
               <p> 
-                <i class='far fa-hand-paper text-danger' v-b-tooltip.hover title="Pending shifts"></i> {{ howManyToSchedule }}
+                <i class='far fa-hand-paper text-danger' v-b-tooltip.hover title="Active pending"></i> {{ howManyPending }}
               </p>
               <p>
-                <i class='far fa-thumbs-up text-success' v-b-tooltip.hover title='Scheduled shifts'></i>  {{ howManyScheduled() }}
+                <i class='far fa-thumbs-up text-success' v-b-tooltip.hover title='Active scheduled'></i>  {{ howManyActive }}
               </p>
             </b-col>
           </b-row>          
@@ -40,14 +40,11 @@ export default {
   name: "ItineraryResume",
   props: [
     "currentItinerary",
-    "howManyShifts",
     "howManyDays",
-    "howManyToSchedule",
-  ],
-  methods: {
-    howManyScheduled() {
-      return this.howManyShifts - this.howManyToSchedule;
-    },
-  },
+    'howManyScheduled',
+    'howManyMissed',
+    'howManyPending',
+    'howManyActive'
+  ]
 };
 </script>

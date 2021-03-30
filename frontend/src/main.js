@@ -37,11 +37,11 @@ const store = new Vuex.Store({
     referenceNumbers: {
       'Dawn': "01",
       'Morning': "02",
-      'Afternoon': '03',
+      'Afternoon': '03',  
       'Evening': '04'
     }
   },
-  getters: {
+  getters: {    
     referenceNumber: (state) => (ref) => {      
       return state.referenceNumbers[ref]
     },
@@ -212,6 +212,28 @@ const store = new Vuex.Store({
       commit("setLoadingComponentName", 'calendar')
       await dispatch('fetchAPI')
       commit("unsetComponentLoading")
+    },
+    async fetchUser({commit, getters}, payload){
+      let res = await fetch(`${getters.getURL()}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      let content = await res.json()
+      console.log("fetchUser === " + JSON.stringify(content))
+      commit('set', {type:'u', object: content.user})
+      return content
+    },
+    async logOut({commit,getters}){
+      await fetch(`${getters.getURL()}/logout`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      commit("set", {type: 'u', object: null})
     },
     async fetchVigilants({ commit, getters }) {
       commit("setLoadingLabel", "the vigilant scheduler");

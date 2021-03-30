@@ -83,19 +83,12 @@ export default{
 		async handleClick(){
 			if(this.isFormValid()){
 				this.isLoading = true
-				let res = await fetch(`${this.$store.getters.getURL()}/login`, {
-			        method: "POST",
-			        headers: {
-			          "Content-Type": "application/json;charset=utf-8",
-			        },
-			        body: JSON.stringify(this.payload),
-			      });
-				let content = await res.json()
-				if(content.user !== null){
-					this.$store.commit("set", {type: 'u', object: content.user})
-				}else{
+				await this.$store.dispatch('fetchUser', this.payload)
+				if(this.$store.state.user === null){
 					this.formError = true
 					this.subTitle = "Wrong username or pass"
+				}else{
+					this.$emit("login")
 				}
 				this.clearForm()
 				this.isLoading = false

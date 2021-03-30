@@ -90,7 +90,7 @@
       </b-row>
 
 
-      <b-row v-for="week in getMonthMatrix" :key="`week-${week.number}`">
+      <b-row :no-gutters='true' v-for="week in getMonthMatrix" :key="`week-${week.number}`">
 
         <b-col v-for="day in week.days" :key="`day-${day.number}`">
           <Day
